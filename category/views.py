@@ -10,9 +10,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from accounts.models import CustomUser
-from category.models import Category, SuggestedCategory
+from category.models import Category, SuggestedCategory,CategoryMedia
 from category.permissions import IsStoreAdminOrManager, IsStoreOwner
-from category.serializers import CategorySerializer, SuggestedCategorySerializer
+from category.serializers import CategorySerializer, SuggestedCategorySerializer,CategoryMediaSerializer
 
 # Create your views here.
 
@@ -76,3 +76,28 @@ class SuggestedCategoryViewSet(viewsets.ModelViewSet):
         suggested_category.delete = True
         suggested_category.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+class CategoryMediaViewSet(viewsets.ModelViewSet):
+    serializer_class = CategoryMediaSerializer
+    queryset = CategoryMedia.objects.all()
+    filter_backends = [DjangoFilterBackend, ]
+    filterset_fields = ['catagory',]
+    # authentication_classes = []
+    permission_classes = []
+
+    def get_permissions(self):
+        if self.action == 'list' or self.action == 'retrieve':
+            permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+        else:
+            permission_classes = [permissions.IsAdminUser]
+        return [permission() for permission in permission_classes]
+    
+    
+
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user)
+

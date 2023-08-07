@@ -34,11 +34,16 @@ class UserDetailsSerializer(serializers.ModelSerializer):
 class CustomRegisterSerializer(RegisterSerializer):
     def custom_signup(self, request, user):
         role = request.data.get('groups')
+        
         user.is_staff = True
         user.save()
         if role:
             user.groups.set(role)
             user.save()
+
+    def save(self,request):
+        print("Form save method")
+        return self.user
 
 
 class GroupProfileSerializers(serializers.ModelSerializer):

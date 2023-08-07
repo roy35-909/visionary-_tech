@@ -4,14 +4,11 @@ from django.db import models
 
 from accounts.models import CustomUser
 from products.models import Product
-
 # Create your models here.
-
 class Cart(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(CustomUser, on_delete=models.PROTECT, editable=False)
     total = models.FloatField(blank=True, default=0)
-
     def __str__(self):
         return str(self.user)
 

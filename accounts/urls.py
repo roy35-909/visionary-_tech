@@ -44,6 +44,7 @@ for provider in providers.registry.get_list():
     except ImportError:
         continue
     prov_urlpatterns = getattr(prov_mod, "urlpatterns", None)
+    
     if prov_urlpatterns:
         provider_urlpatterns += prov_urlpatterns
 urlpatterns += provider_urlpatterns

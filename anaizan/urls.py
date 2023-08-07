@@ -28,7 +28,7 @@ from django.conf.urls.static import static
 from rest_framework.schemas import get_schema_view
 urlpatterns = [
     path('api_schema', get_schema_view(title="API Schema",description="Guide for the Rest API"),name='api_schema'),
-    path('swagger-ui/', TemplateView.as_view(
+    path('', TemplateView.as_view(
         template_name = 'docs.html',
         extra_context = {'schema_url':'api_schema'}
     ),name = 'swagger-ui'),
@@ -58,7 +58,7 @@ urlpatterns = [
     path('accounts/account-confirm-email/', VerifyEmailView.as_view(), name='account_email_verification_sent'),
     re_path(r'^account-confirm-email/(?P<key>[-:\w]+)/$', VerifyEmailView.as_view(),
             name='account_confirm_email'),
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 """
 + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

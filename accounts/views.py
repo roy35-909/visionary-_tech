@@ -16,6 +16,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTTokenUserAuthentication
+from allauth.account.signals import user_signed_up
+
+
+def user_signed_up(request,user):
+    print("Simanta KUmar Roy form signal")
 
 from .serializers import CustomRegisterSerializer, GroupSerializers, UserDetailsSerializer
 
@@ -94,6 +99,9 @@ class StaffRegisterView(RegisterView):
         else:
             serializers = TokenSerializer(user.auth_token, context=self.get_serializer_context())
             return {**serializers.data, **user_details.data}
+        
+    def perform_create(self,seri):
+        print("User is Creating By Roy")
 
 
 class CommonUserRegisterView(RegisterView):
@@ -116,7 +124,8 @@ class CommonUserRegisterView(RegisterView):
         else:
             serializers = TokenSerializer(user.auth_token, context=self.get_serializer_context())
             return {**serializers.data, **user_details.data}
-
+    def perform_create(self,seri):
+        print("User is Creating By Roy")
 
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
@@ -138,6 +147,7 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     def perform_create(self, serializer):
+        print("Form user view set")
         serializer.save(created_by=self.request.user)
 
 

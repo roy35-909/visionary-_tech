@@ -29,16 +29,13 @@ class Product(models.Model):
     star_rating = models.IntegerField(blank=True, null=True)
     likes = models.IntegerField(blank=True, null=True)
     detail_desc = models.CharField(max_length=150, blank=True, null=True)
-
     is_active = models.BooleanField(default=False)
-
     # extra = models.JSONField(blank=True, null=True)
 
     created_by = models.ForeignKey(CustomUser, related_name="product_created_by", on_delete=models.CASCADE, editable=False,null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_by = models.ForeignKey(CustomUser, related_name="product_updated_by", on_delete=models.CASCADE, null=True, blank=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
-
     delete = models.BooleanField(default=False)
 
     objects = ProductModelManager()
@@ -54,7 +51,7 @@ class ProductPriceModelManager(models.Manager):
 
 class ProductPrice(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.OneToOneField(Product, on_delete=models.CASCADE)
     quantity_min = models.PositiveIntegerField(default=1)
     quantity_max = models.PositiveIntegerField(null=True, blank=True)
     price = models.DecimalField(max_digits=12, decimal_places=2)

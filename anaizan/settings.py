@@ -72,6 +72,7 @@ INSTALLED_APPS = [
 
     'corsheaders',
     'rest_framework_swagger',
+    'drf_standardized_errors',
 ]
 
 # default is 10 pixels
@@ -216,12 +217,14 @@ else:
     STATIC_URL = "static/"
     STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+
+
 STATICFILES_DIRS = [
     BASE_DIR / "staticfiles",
 
 ]
-
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_DIR = os.path.join(BASE_DIR,"media")
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 
@@ -305,25 +308,47 @@ if DEBUG:
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     )
-'''
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': DEFAULT_AUTHENTICATION_CLASSES,
     'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDERER_CLASSES,
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 25
+    'PAGE_SIZE': 25,
+    'EXCEPTION_HANDLER': "drf_standardized_errors.handler.exception_handler"
 }
 
+
+
+
+
+
+
+
 '''
-
-
-
-
-
 REST_FRAMEWORK = {
   'DEFAULT_AUTHENTICATION_CLASSES': (
     'rest_framework_simplejwt.authentication.JWTAuthentication',
   ),
+  'DEFAULT_RENDERER_CLASSES':DEFAULT_RENDERER_CLASSES,
+  'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+  'PAGE_SIZE': 25,
+  
 }
+'''
+
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'api_key': {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'Authorization'
+        }
+    },
+}
+
+
+
 
 from datetime import timedelta
 SIMPLE_JWT = {

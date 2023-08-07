@@ -2,10 +2,15 @@ from django.contrib.auth.models import AbstractUser, Group
 from django.db import models
 from django_countries.fields import CountryField
 from sorl.thumbnail import ImageField
-
 from .managers import CommonUserManager, StaffManager
 
 # Create your models here.
+class Role(models.Model):
+    role_name = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.role_name
 
 class CustomUser(AbstractUser):
     class GenderChoices(models.IntegerChoices):
@@ -13,8 +18,10 @@ class CustomUser(AbstractUser):
         FEMALE = 2, 'Female'
         OTHERS = 3, 'Others'
 
-    last_name = None
-    first_name = None
+    last_name = models.CharField(verbose_name='Last Name', max_length=100,null=True)
+    first_name = models.CharField(verbose_name="First name", max_length=100,null=True)
+    phone_number = models.CharField(verbose_name='Phone number', max_length=15,null=True)
+    role = models.ForeignKey(Role,on_delete=models.CASCADE,null=True)
     name = models.CharField(verbose_name='Full Name', max_length=100)
     photo = ImageField(upload_to='users', null=True, blank=True)
     dob = models.CharField(max_length=100, null=True, blank=True, verbose_name='Date of Birth')
@@ -30,6 +37,10 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
+
+
+
+
 
 
 class Staff(CustomUser):

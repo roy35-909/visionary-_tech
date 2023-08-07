@@ -28,7 +28,6 @@ class Category(MPTTModel):
     updated_at = models.DateTimeField(auto_now=True, editable=False)
     updated_by = models.ForeignKey(CustomUser, null=True, blank=True, related_name="cat_updated_at", on_delete=models.CASCADE, editable=False)
     category = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, db_index=True, related_name='cat_children')
-
     delete = models.BooleanField(default=False)
 
     objects = CategoryModelManager()
@@ -41,6 +40,16 @@ class Category(MPTTModel):
         unique_together = ('slug', 'name',)
         verbose_name = 'Category'
         verbose_name_plural = 'Categories'
+
+
+class CategoryMedia(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    catagory = models.OneToOneField(Category, on_delete=models.CASCADE)
+    media = models.FileField(upload_to="category/")
+    created_by = models.ForeignKey(CustomUser, related_name="c_media_created_by", on_delete=models.CASCADE, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
+    updated_by = models.ForeignKey(CustomUser, related_name="c_media_updated_by", on_delete=models.CASCADE, null=True, blank=True, editable=False)
+    updated_at = models.DateTimeField(auto_now=True, editable=False)
 
 
 class SuggestedCategoryModelManager(models.Manager):
