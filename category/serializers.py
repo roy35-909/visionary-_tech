@@ -6,7 +6,6 @@ from products.models import Product
 from products.serializers import ProductSerializer
 
 
-
 class CategoryMediaSerializer(serializers.ModelSerializer):
     type = serializers.SerializerMethodField('get_type')
     class Meta:
@@ -21,20 +20,27 @@ class CategoryMediaSerializer(serializers.ModelSerializer):
             return obj.typee
         except:
             return None
-       
+
+class RecursiveField(serializers.Serializer):
+        
+        def to_representation(self, value):
+            serializer = self.parent.parent.__class__(value, context=self.context)
+            return serializer.data      
+
 
 class CategorySerializer(serializers.ModelSerializer):
-
- 
+    
+    cat_children = RecursiveField(many=True)
     """ Category is_active = 1 serializer """
     class Meta:
         model = Category
-        fields = ('id', 'code', 'name', 'description', 'slug', 'is_active', 'created_at', 'created_by', 'updated_at', 'updated_by', 'category',)
+        fields = ('id', 'code', 'name', 'description', 'slug', 'is_active','cat_children')
         read_only_fields = ('id', 'code', 'created_at', 'created_by', 'updated_at', 'updated_by',)
-
+        
 # Note :  need to change when Big Data Comes 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
+        representation['is_leaf'] = instance.is_leaf_node()
         if self.context.get('view') and hasattr(self.context['view'], 'action'):
             if self.context['view'].action == 'retrieve':
                 objj = Product.objects.filter(category=instance.id)
@@ -45,10 +51,11 @@ class CategorySerializer(serializers.ModelSerializer):
                     request = self.context.get('request')
                     catagory_ser = CategoryMediaSerializer(catagory_obj,context = {'request':request})
                     representation['icon'] = catagory_ser.data
+                    
                 except:
                     representation['icon'] = None
                 
-            if self.context['view'].action == 'list':
+            if self.context['view'].action == 'list' and instance.is_leaf_node():
                 objj = Product.objects.filter(category=instance.id)[:4]
                 ser = ProductSerializer(objj,many=True)
                 representation['products_from'] = ser.data
@@ -58,10 +65,12 @@ class CategorySerializer(serializers.ModelSerializer):
                     catagory_ser = CategoryMediaSerializer(catagory_obj,context = {'request':request})
                     representation['icon'] = catagory_ser.data
                 except:
-                    representation['icon'] = None
-                
-                    
+                    representation['icon'] = None        
         return representation
+    
+
+
+    
     
 
 class SuggestedCategorySerializer(serializers.ModelSerializer):

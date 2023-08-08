@@ -32,18 +32,23 @@ class Product(models.Model):
     is_active = models.BooleanField(default=False)
     # extra = models.JSONField(blank=True, null=True)
 
-    created_by = models.ForeignKey(CustomUser, related_name="product_created_by", on_delete=models.CASCADE, editable=False,null=True,blank=True)
+    created_by = models.ForeignKey(CustomUser, related_name="product_created_by", on_delete=models.CASCADE, editable=False)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_by = models.ForeignKey(CustomUser, related_name="product_updated_by", on_delete=models.CASCADE, null=True, blank=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
     delete = models.BooleanField(default=False)
+    def formfield_for_foreignkey(self, category, request, **kwargs):
+        pass
+
 
     objects = ProductModelManager()
 
     class Meta:
         verbose_name_plural = 'Products'
 
-
+    def __str__(self):
+        return f"Name: {self.name}"
+    
 class ProductPriceModelManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().exclude(delete=True)

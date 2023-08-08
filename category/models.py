@@ -3,7 +3,7 @@ import uuid
 from autoslug import AutoSlugField
 from django.core.validators import MaxValueValidator
 from django.db import models
-from mptt.models import MPTTModel, TreeForeignKey, TreeManyToManyField
+from mptt.models import MPTTModel, TreeForeignKey, TreeManyToManyField,TreeManager
 
 from accounts.models import CustomUser
 from category.utils import create_new_category_code_number
@@ -40,6 +40,9 @@ class Category(MPTTModel):
         unique_together = ('slug', 'name',)
         verbose_name = 'Category'
         verbose_name_plural = 'Categories'
+
+    def __str__(self) -> str:
+        return f"Name : {self.name} Code : {self.code}"
 
 
 class CategoryMedia(models.Model):

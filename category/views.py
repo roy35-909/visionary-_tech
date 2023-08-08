@@ -16,9 +16,8 @@ from category.serializers import CategorySerializer, SuggestedCategorySerializer
 
 # Create your views here.
 
-
 class CategoryViewSet(viewsets.ModelViewSet):
-    queryset = Category.objects.all()
+    queryset = Category.objects.filter(level=0)
     serializer_class = CategorySerializer
     filter_backends = [DjangoFilterBackend, ]
     filterset_fields = ['code', 'name', 'description', 'category', 'is_active', ]
@@ -42,6 +41,8 @@ class CategoryViewSet(viewsets.ModelViewSet):
                                                          "Develivery Manager", "Support Manager", "Ads Manager",
                                                          "SEO Manager"]).exists():
                 return queryset.all()
+        
+        #print(queryset[0].get_children())
         return queryset.filter(is_active=True)
 
     def perform_create(self, serializer):
